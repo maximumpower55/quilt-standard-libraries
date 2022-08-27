@@ -49,6 +49,25 @@ public abstract class ServerPlayerEntityMixin {
 	@Unique
 	private final ThreadLocal<ScreenHandler> quilt$openHandledScreen$screenHandler = new ThreadLocal<>();
 
+	@Redirect(
+		method = "openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/server/network/ServerPlayerEntity;closeHandledScreen()V"
+		)
+	)
+	private void closeCurrentScreenIfAllowed(ServerPlayerEntity player, NamedScreenHandlerFactory factory) {
+		if (factory instanceof SimpleNamedScreenHandlerFactory simpleFactory && simpleFactory.baseFactory instanceof QuiltExtendedScreenHandlerFactory extendedFactory) {
+			factory = extendedFactory;
+		}
+
+		if (factory instanceof QuiltExtendedScreenHandlerFactory extendedFactory && extendedFactory.shouldCloseCurrentScreen()) {
+			closeHandledScreen();
+		} else {
+			closeScreenHandler();
+		}
+	}
+
 	@Inject(
 		method = "openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;",
 		at = @At(
@@ -75,15 +94,16 @@ public abstract class ServerPlayerEntityMixin {
 		)
 	)
 	private void replaceVanillaScreenOpenPacket(ServerPlayNetworkHandler networkHandler, Packet<?> screenOpenPacket, NamedScreenHandlerFactory factory) {
-		if (factory instanceof QuiltExtendedScreenHandlerFactory || (factory instanceof SimpleNamedScreenHandlerFactory simpleFactory && simpleFactory.baseFactory instanceof QuiltExtendedScreenHandlerFactory)) {
-			networkHandler.sendPacket(((QuiltExtendedScreenHandlerFactory) factory).makeCustomScreenOpenPacket((ServerPlayerEntity) (Object) this, quilt$openHandledScreen$screenHandler.get()));
+		if (factory instanceof SimpleNamedScreenHandlerFactory simpleFactory && simpleFactory.baseFactory instanceof QuiltExtendedScreenHandlerFactory extendedFactory) {
+			factory = extendedFactory;
+		}
+
+		if (factory instanceof QuiltExtendedScreenHandlerFactory extendedFactory) {
+			networkHandler.sendPacket(extendedFactory.makeCustomScreenOpenPacket((ServerPlayerEntity) (Object) this, quilt$openHandledScreen$screenHandler.get()));
 		} else {
 			networkHandler.sendPacket(screenOpenPacket);
 		}
-	}
 
-	@Inject(method = "openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;", at = @At("RETURN"))
-	private void clearStoredOpenedScreenHandler(NamedScreenHandlerFactory factory, CallbackInfoReturnable<OptionalInt> cir, ScreenHandler handler) {
 		quilt$openHandledScreen$screenHandler.remove();
 	}
 }
