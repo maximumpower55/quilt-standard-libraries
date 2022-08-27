@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Screen Handler API"
+	moduleName = "screen_handler"
+	id = "quilt_screen_handler"
+	description = "Hooks and extensions for creating screen handlers."
+	library = "gui"
+	moduleDependencies {
+		core {
+			impl("qsl_base")
+			impl("networking")
+		}
+	}
+	accessWidener()
+}

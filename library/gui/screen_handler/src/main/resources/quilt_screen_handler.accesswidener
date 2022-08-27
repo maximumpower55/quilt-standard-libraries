@@ -1,0 +1,6 @@
+accessWidener v2 named
+
+transitive-accessible  class    net/minecraft/client/gui/screen/ingame/HandledScreens$Provider
+transitive-accessible  method    net/minecraft/client/gui/screen/ingame/HandledScreens    register  (Lnet/minecraft/screen/ScreenHandlerType;Lnet/minecraft/client/gui/screen/ingame/HandledScreens$Provider;)V
+
+accessible  field    net/minecraft/screen/SimpleNamedScreenHandlerFactory    baseFactory  Lnet/minecraft/screen/ScreenHandlerFactory;
