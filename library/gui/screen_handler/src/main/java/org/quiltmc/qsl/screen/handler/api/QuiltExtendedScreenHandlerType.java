@@ -16,8 +16,17 @@
 
 package org.quiltmc.qsl.screen.handler.api;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public interface QuiltExtendedScreenHandlerType {
+	/**
+	 * Read the custom data written on the server by {@link QuiltExtendedScreenHandlerFactory#makeCustomScreenOpenPacket(ServerPlayerEntity, ScreenHandler)},
+	 * and deserialize it on the client after the screen handler is opened.
+	 */
+	@Environment(EnvType.CLIENT)
 	default void readCustomScreenOpeningData(PacketByteBuf buf) {}
 }

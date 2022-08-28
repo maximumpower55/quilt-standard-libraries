@@ -56,12 +56,12 @@ public abstract class ServerPlayerEntityMixin {
 			target = "Lnet/minecraft/server/network/ServerPlayerEntity;closeHandledScreen()V"
 		)
 	)
-	private void closeCurrentScreenIfAllowed(ServerPlayerEntity player, NamedScreenHandlerFactory factory) {
+	private void recenterMouseOnCloseIfAllowed(ServerPlayerEntity player, NamedScreenHandlerFactory factory) {
 		if (factory instanceof SimpleNamedScreenHandlerFactory simpleFactory && simpleFactory.baseFactory instanceof QuiltExtendedScreenHandlerFactory extendedFactory) {
 			factory = extendedFactory;
 		}
 
-		if (factory instanceof QuiltExtendedScreenHandlerFactory extendedFactory && extendedFactory.shouldCloseCurrentScreen()) {
+		if (factory instanceof QuiltExtendedScreenHandlerFactory extendedFactory && extendedFactory.shouldRecenterMouseOnClose()) {
 			closeHandledScreen();
 		} else {
 			closeScreenHandler();

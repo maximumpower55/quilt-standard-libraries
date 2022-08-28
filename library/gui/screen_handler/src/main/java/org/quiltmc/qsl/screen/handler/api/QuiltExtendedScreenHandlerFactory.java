@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.screen.handler.api;
 
+import org.jetbrains.annotations.Contract;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
@@ -31,12 +32,25 @@ import net.minecraft.util.Identifier;
 public interface QuiltExtendedScreenHandlerFactory extends NamedScreenHandlerFactory {
 	Identifier EXTENDED_OPEN_SCREEN_PACKET = new Identifier("quilt", "extended_open_screen_packet");
 
+	/**
+	 * Write custom data to be sent when this screen handler gets opened. Will be read and deserialized on the client by
+	 * {@link QuiltExtendedScreenHandlerType#readCustomScreenOpeningData(PacketByteBuf)}.
+	 */
+	@Contract(pure = true)
 	default void writeCustomScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {}
 
-	default boolean shouldCloseCurrentScreen() {
+	/**
+	 * If true, a {@link CloseScreenS2CPacket} will be sent to the client closing this screen handler, resulting in the client's mouse cursor being re-centered.
+	 * If false, a {@link CloseScreenS2CPacket} won't be sent to the client closing this screen handler, which stops the client's mouse cursor from being re-centered.
+	 */
+	default boolean shouldRecenterMouseOnClose() {
 		return true;
 	}
 
+	/**
+	 * Create an extended screen open packet to be sent to clients.
+	 */
+	@Contract(value = "_ -> new")
 	default Packet<?> makeCustomScreenOpenPacket(ServerPlayerEntity player, ScreenHandler screenHandler) {
 		PacketByteBuf buf = PacketByteBufs.create();
 		new OpenScreenS2CPacket(screenHandler.syncId, screenHandler.getType(), getDisplayName()).write(buf);

@@ -12,6 +12,8 @@ qslModule {
 		core {
 			impl("qsl_base")
 			impl("networking")
+			testmodOnly("registry")
+			testmodOnly("resource_loader")
 		}
 	}
 	accessWidener()

@@ -18,6 +18,9 @@ package org.quiltmc.qsl.screen.handler.api;
 
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.slot.Slot;
 
@@ -26,7 +29,11 @@ public final class ScreenHandlerHelper {
 		throw new UnsupportedOperationException("ScreenHandlerHelper only contains static definitions.");
 	}
 
-	public static void addPlayerInventorySlots(Consumer<Slot> slotAdder, PlayerInventory playerInventory) {
+	/**
+	 * Add the slots from an player's inventory and hotbar to a screen handler.
+	 */
+	@Contract(mutates = "this")
+	public static void addPlayerInventorySlots(@NotNull Consumer<Slot> slotAdder, @NotNull PlayerInventory playerInventory) {
 		int y, x;
 
 		for (y = 0; y < 3; ++y) {
@@ -35,7 +42,7 @@ public final class ScreenHandlerHelper {
 			}
 		}
 
-		for(y = 0; y < 9; ++y) {
+		for (y = 0; y < 9; ++y) {
 			slotAdder.accept(new Slot(playerInventory, y, 8 + y * 18, 142));
 		}
 	}
